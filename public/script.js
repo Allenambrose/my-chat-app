@@ -8,49 +8,23 @@ const joinBtn = document.getElementById("joinBtn");
 const form = document.getElementById("form");
 const input = document.getElementById("input");
 const messages = document.getElementById("messages");
+const onlineCount = document.getElementById("onlineCount");
 
-// Show online user count
-socket.on("online users", (count) => {
-  document.getElementById("onlineCount").textContent = `Online: ${count}`;
-});
-
-// When history comes from DB
-socket.on("chat history", (messagesList) => {
-  messages.innerHTML = "";
-  messagesList.forEach((msgObj) => {
-    displayMessage(msgObj);
-  });
-});
-
-// Time Format Function
+// 📌 Format Time (Full — Date + AM/PM)
 function formatTime(timestamp) {
-  const now = new Date();
-  const time = new Date(timestamp);
+  const date = new Date(timestamp);
 
-  const diffMs = now - time;
-  const diffMin = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-
-  if (diffMin < 1) return "Just now";
-  if (diffMin < 60) return `${diffMin} min ago`;
-  if (diffHours < 24) return `${diffHours} hr ago`;
-
-  if (time.toDateString() === now.toDateString()) {
-    return time.toLocaleTimeString("en-IN", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true
-    });
-  }
-  
-  return time.toLocaleDateString("en-IN", {
+  return date.toLocaleString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
     day: "2-digit",
     month: "short",
     year: "numeric"
   });
 }
 
-// LOGIN
+// Join Chat
 joinBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
   if (username === "") return;
@@ -61,41 +35,47 @@ joinBtn.addEventListener("click", () => {
   socket.emit("user joined", username);
 });
 
-// SEND MESSAGE
+// Send Chat Message
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+  if (input.value) {
+    socket.emit("chat message", {
+      username: username,
+      text: input.value,
+      timestamp: Date.now()
+    });
 
-  if (input.value.trim() === "") return;
-
-  socket.emit("chat message", {
-    username,
-    text: input.value,
-    timestamp: Date.now()
-  });
-
-  input.value = "";
+    input.value = "";
+  }
 });
 
-// Display messages in chat
+// Receive Chat Messages
 socket.on("chat message", (msgObj) => {
-  displayMessage(msgObj);
-});
-
-function displayMessage(msgObj) {
-  const li = document.createElement("li");
+  const item = document.createElement("li");
   const formattedTime = formatTime(msgObj.timestamp);
 
-  if (msgObj.system) {
-    li.classList.add("system-message");
-    li.innerHTML = `<strong>System:</strong> ${msgObj.text}<span class="time">${formattedTime}</span>`;
-  } else if (msgObj.username === username) {
-    li.classList.add("my-message");
-    li.innerHTML = `<strong>You:</strong> ${msgObj.text}<span class="time">${formattedTime}</span>`;
-  } else {
-    li.classList.add("other-message");
-    li.innerHTML = `<strong>${msgObj.username}:</strong> ${msgObj.text}<span class="time">${formattedTime}</span>`;
+  if (msgObj.username === "System") {
+    item.classList.add("system-message");
+    item.innerHTML = `${msgObj.text} <span class="time">${formattedTime}</span>`;
+  }
+  else if (msgObj.username === username) {
+    item.classList.add("my-message");
+    item.innerHTML = `<strong>You:</strong> ${msgObj.text} 
+      <span class="time">${formattedTime}</span>`;
+  }
+  else {
+    item.classList.add("other-message");
+    item.innerHTML = `<strong>${msgObj.username}:</strong> ${msgObj.text} 
+      <span class="time">${formattedTime}</span>`;
   }
 
-  messages.appendChild(li);
-  messages.scrollTop = messages.scrollHeight;
-}
+  messages.appendChild(item);
+  messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+});
+
+// Update Online User Count
+socket.on("online users", (count) => {
+  if (onlineCount) {
+    onlineCount.textContent = count;
+  }
+});
