@@ -9,7 +9,6 @@ const form = document.getElementById("form");
 const input = document.getElementById("input");
 const messages = document.getElementById("messages");
 
-
 function formatTime(timestamp) {
   const now = new Date();
   const time = new Date(timestamp);
@@ -22,27 +21,19 @@ function formatTime(timestamp) {
   if (diffMin < 60) return `${diffMin} min ago`;
   if (diffHours < 24) return `${diffHours} hr ago`;
 
-  if (time.toDateString() === now.toDateString()) {
-    return time.toLocaleTimeString("en-IN", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true
-    });
-  }
-
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
+
   if (time.toDateString() === yesterday.toDateString()) {
     return "Yesterday";
   }
 
-  return time.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
+  return time.toLocaleTimeString("en-IN", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
   });
 }
-
 
 joinBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
@@ -54,34 +45,33 @@ joinBtn.addEventListener("click", () => {
   socket.emit("user joined", username);
 });
 
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  if (input.value) {
-    socket.emit("chat message", {
-      username: username,
-      text: input.value,
-      timestamp: new Date() // 👈 send actual timestamp
-    });
+  if (input.value.trim() === "") return;
 
-    input.value = "";
-  }
+  socket.emit("chat message", {
+    username: username,
+    text: input.value,
+    timestamp: Date.now() // IMPORTANT FIX ✔️
+  });
+
+  input.value = "";
 });
-
 
 socket.on("chat message", (msgObj) => {
   const item = document.createElement("li");
-  const formattedTime = formatTime(msgObj.timestamp || new Date()); // 🕒 format smartly
+  const formattedTime = formatTime(msgObj.timestamp || Date.now());
 
   if (msgObj.username === "System") {
     item.classList.add("system-message");
-    item.innerHTML = `${msgObj.text} <span class="time">${formattedTime}</span>`;
-  }
+    item.innerHTML = `${msgObj.text} 
+      <span class="time">${formattedTime}</span>`;
+  } 
   else if (msgObj.username === username) {
     item.classList.add("my-message");
     item.innerHTML = `<strong>You:</strong> ${msgObj.text}
       <span class="time">${formattedTime}</span>`;
-  }
+  } 
   else {
     item.classList.add("other-message");
     item.innerHTML = `<strong>${msgObj.username}:</strong> ${msgObj.text}
