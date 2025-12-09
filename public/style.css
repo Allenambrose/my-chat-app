@@ -1,11 +1,12 @@
 body {
-  background: #0a0f0f;
+  background: #0c0f0f;
   color: white;
   font-family: Arial;
-  text-align: center;
+  margin: 0;
 }
 
 #loginScreen {
+  text-align: center;
   margin-top: 200px;
 }
 
@@ -14,60 +15,94 @@ body {
   font-size: 18px;
 }
 
-#chatScreen {
-  width: 100%;
-  height: 100vh;
-}
-
 #topBar {
   background: #003d33;
-  color: white;
   padding: 10px;
   display: flex;
   justify-content: space-between;
 }
 
 .adminBtn {
-  background: #e40000;
-  color: white;
-  border: none;
+  background: #d60000;
   padding: 6px 12px;
+  border: none;
   border-radius: 6px;
+  color: white;
 }
 
 #messages {
-  list-style: none;
-  margin: 0;
-  padding: 10px;
-  height: 75vh;
+  height: 73vh;
   overflow-y: auto;
+  list-style: none;
+  padding: 10px;
 }
 
 .my-msg {
   background: #004d40;
-  margin: 5px;
+  margin: 8px;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: right;
 }
+
 .their-msg {
-  background: #1b1b1b;
-  margin: 5px;
+  background: #1e1e1e;
+  margin: 8px;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: left;
 }
+
 .user {
   font-weight: bold;
-  color: #00ffcc;
+  color: #00ffd2;
 }
+
 .time {
-  font-size: 10px;
   opacity: .7;
-  margin-left: 5px;
+  font-size: 10px;
+  margin-left: 8px;
 }
+
 .typing {
   font-style: italic;
-  font-size: 12px;
   color: #00eaff;
+  margin-top: 5px;
+}
+
+/* EMOJI PICKER PANEL */
+#emojiPanel {
+  background: #1b1b1b;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  font-size: 25px;
+  border-radius: 12px;
+  margin: 5px;
+}
+#emojiPanel.hidden {
+  display: none;
+}
+
+#form {
+  display: flex;
+  background: #003d33;
+  padding: 8px;
+}
+#input {
+  flex-grow: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+}
+
+#emojiBtn {
+  background: #00796b;
+  padding: 5px 12px;
+  border: none;
+  color: white;
+  font-size: 20px;
+  margin-right: 8px;
+  border-radius: 6px;
 }

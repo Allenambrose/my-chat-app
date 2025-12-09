@@ -11,6 +11,9 @@ const input = document.getElementById("input");
 const messages = document.getElementById("messages");
 const clearBtn = document.getElementById("clearBtn");
 
+const emojiBtn = document.getElementById("emojiBtn");
+const emojiPanel = document.getElementById("emojiPanel");
+
 function formatTime(ts) {
   return new Date(ts).toLocaleTimeString("en-IN", {
     hour: "2-digit", minute: "2-digit", hour12: true
@@ -19,25 +22,23 @@ function formatTime(ts) {
 
 joinBtn.onclick = () => {
   username = usernameInput.value.trim();
-  if (!username) return;
-  
+  if(!username) return;
   loginScreen.style.display = "none";
   chatScreen.style.display = "block";
-
   socket.emit("user joined", username);
 };
 
 form.onsubmit = (e) => {
   e.preventDefault();
-  if (!input.value.trim()) return;
+  if(!input.value.trim()) return;
 
   socket.emit("chat message", {
     username,
     text: input.value,
     timestamp: Date.now()
   });
-
   input.value = "";
+  emojiPanel.classList.add("hidden");
 };
 
 socket.on("chat message", (msg) => {
@@ -49,7 +50,6 @@ socket.on("chat message", (msg) => {
       <span class="time">${formatTime(msg.timestamp)}</span>
     </div>
   `;
-
   messages.appendChild(li);
   li.scrollIntoView({ behavior: "smooth" });
 
@@ -60,37 +60,42 @@ socket.on("online users", users => {
   onlineCount.innerText = `Online: ${users.length}`;
 });
 
+// TYPING
 input.addEventListener("input", () => {
   socket.emit("typing", username);
 });
 
-socket.on("typing", (user) => {
-  showTyping(user);
-});
+socket.on("typing", (user) => showTyping(user));
 
-function showTyping(user) {
-  const id = "typing";
-  let el = document.getElementById(id);
-  if (!el) {
-    el = document.createElement("div");
-    el.id = id;
-    el.classList.add("typing");
+function showTyping(user){
+  const id="typing";
+  let el=document.getElementById(id);
+  if(!el){
+    el=document.createElement("div");
+    el.id=id;
+    el.className="typing";
     messages.appendChild(el);
   }
-  el.innerText = `${user} is typing...`;
-  setTimeout(() => el.remove(), 2000);
+  el.innerText=`${user} is typing...`;
+  setTimeout(()=>el.remove(),2000);
 }
 
-socket.on("seen update", (user) => {
-  document.querySelectorAll(".my-msg .time").forEach(t => {
-    t.innerText = "Seen ✔✔";
-  });
+socket.on("seen update", () => {
+  document.querySelectorAll(".my-msg .time")
+    .forEach(t => t.innerText = "Seen ✔✔");
 });
 
-clearBtn.onclick = () => {
-  socket.emit("clear chat", username);
+// CLEAR CHAT ADMIN
+clearBtn.onclick = () => socket.emit("clear chat", username);
+
+socket.on("clear chat now", () => messages.innerHTML = "");
+
+// EMOJI PICKER
+emojiBtn.onclick = () => emojiPanel.classList.toggle("hidden");
+
+emojiPanel.onclick = (e) => {
+  if(e.target.innerText.trim()){
+    input.value += e.target.innerText;
+    input.focus();
+  }
 };
-
-socket.on("clear chat now", () => {
-  messages.innerHTML = "";
-});
