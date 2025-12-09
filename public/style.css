@@ -1,0 +1,161 @@
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.chat-container {
+  width: 350px;
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+h2 {
+  text-align: center;
+}
+
+#messages {
+  list-style: none;
+  padding: 0;
+  height: 250px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+#messages li {
+  background: #444;
+  padding: 8px;
+  margin: 5px;
+  border-radius: 6px;
+}
+
+#form {
+  display: flex;
+}
+
+#input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+}
+
+button {
+  padding: 8px;
+  background: #04AA6D;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}
+
+#loginScreen {
+  background: #222;
+  padding: 20px;
+  width: 300px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+#usernameInput {
+  width: 90%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+#joinBtn {
+  padding: 8px 12px;
+  background: #04AA6D;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.my-message {
+  background: #04AA6D;
+  color: white;
+  margin-left: auto;
+  text-align: right;
+}
+
+.other-message {
+  background: #444;
+  margin-right: auto;
+  text-align: left;
+}
+
+/* Better bubble look */
+#messages li {
+  padding: 10px;
+  margin: 8px 0;
+  max-width: 75%;
+  border-radius: 10px;
+  word-wrap: break-word;
+}
+
+/* My message bubble on right */
+.my-message {
+  background: #25D366;
+  margin-left: auto;
+  text-align: right;
+  color: white;
+}
+
+/* Others' bubble on left */
+.other-message {
+  background: #3A3B3C;
+  margin-right: auto;
+  text-align: left;
+  color: white;
+}
+
+/* Add spacing around chat box */
+#messages {
+  padding: 10px;
+}
+
+.time {
+  font-size: 12px;
+  margin-left: 10px;
+  color: #bdbdbd;
+  float: right;
+}
+
+.time {
+  font-size: 12px;
+  margin-left: 10px;
+  color: #bdbdbd;
+  float: right;
+}
+
+.system-message {
+  background: #444;
+  text-align: center;
+  font-size: 14px;
+  color: #ffd369;
+  border-left: 3px solid gold;
+}
+
+.system-message {
+  background: #333;
+  color: gold;
+  border-left: 4px solid gold;
+  text-align: center;
+  font-size: 14px;
+  padding: 8px 10px;
+  margin: 5px auto;
+  border-radius: 6px;
+  width: fit-content;
+  max-width: 80%;
+}
+
+
