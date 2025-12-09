@@ -9,15 +9,6 @@ const form = document.getElementById("form");
 const input = document.getElementById("input");
 const messages = document.getElementById("messages");
 
-// Typing Indicator
-const typingIndicator = document.createElement("p");
-typingIndicator.id = "typingIndicator";
-typingIndicator.style.color = "gray";
-typingIndicator.style.fontSize = "14px";
-typingIndicator.style.margin = "5px";
-typingIndicator.style.display = "none";
-chatScreen.prepend(typingIndicator);
-
 function formatTime(timestamp) {
   const now = new Date();
   const time = new Date(timestamp);
@@ -37,9 +28,19 @@ function formatTime(timestamp) {
   });
 }
 
+// 🕒 Update timestamps every 30 seconds
+setInterval(() => {
+  document.querySelectorAll(".time").forEach((timeElement) => {
+    const originalTS = parseInt(timeElement.dataset.ts);
+    if (!isNaN(originalTS)) {
+      timeElement.innerText = formatTime(originalTS);
+    }
+  });
+}, 30000); // 30 seconds refresh
+
 joinBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
-  if (username === "") return;
+  if (!username) return;
 
   loginScreen.style.display = "none";
   chatScreen.style.display = "block";
@@ -47,54 +48,39 @@ joinBtn.addEventListener("click", () => {
   socket.emit("user joined", username);
 });
 
+input.addEventListener("input", () => {
+  socket.emit("typing", username);
+});
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  if (input.value.trim() === "") return;
+  if (!input.value.trim()) return;
 
   socket.emit("chat message", {
-    username: username,
+    username,
     text: input.value,
     timestamp: Date.now()
   });
 
   input.value = "";
-  typingIndicator.style.display = "none";
 });
 
 socket.on("chat message", (msgObj) => {
-  const item = document.createElement("li");
-  const formattedTime = formatTime(msgObj.timestamp || Date.now());
+  const li = document.createElement("li");
+  const formatted = formatTime(msgObj.timestamp);
 
-  if (msgObj.username === username) {
-    item.classList.add("my-message");
-    item.innerHTML = `<strong>You:</strong> ${msgObj.text}
-      <span class="time">${formattedTime}</span>`;
-  } else if (msgObj.username === "System") {
-    item.classList.add("system-message");
-    item.innerHTML = `${msgObj.text}
-      <span class="time">${formattedTime}</span>`;
-  } else {
-    item.classList.add("other-message");
-    item.innerHTML = `<strong>${msgObj.username}:</strong> ${msgObj.text}
-      <span class="time">${formattedTime}</span>`;
-  }
+  li.classList.add(msgObj.username === username ? "my-message" :
+                   msgObj.username === "System" ? "system-message" :
+                   "other-message");
 
-  messages.appendChild(item);
-  messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
-});
+  li.innerHTML = `
+    <strong>${msgObj.username === username ? "You" : msgObj.username}:</strong> 
+    ${msgObj.text}
+    <span class="time" data-ts="${msgObj.timestamp}">
+      ${formatted}
+    </span>
+  `;
 
-// TYPING EVENTS
-input.addEventListener("input", () => {
-  socket.emit("typing", username);
-});
-
-socket.on("typing", (user) => {
-  if (user !== username) {
-    typingIndicator.innerText = `${user} is typing...`;
-    typingIndicator.style.display = "block";
-
-    setTimeout(() => {
-      typingIndicator.style.display = "none";
-    }, 2000);
-  }
+  messages.appendChild(li);
+  li.scrollIntoView({ behavior: "smooth" });
 });
