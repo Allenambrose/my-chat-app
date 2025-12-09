@@ -9,48 +9,43 @@ const io = socketIO(server);
 
 app.use(express.static("public"));
 
-// 🔗 MongoDB Atlas Connection String (YOUR OWN)
+// MongoDB Connection
 const uri = "mongodb+srv://allenambrose242_db_user:DVCGqcXjwInEhKXS@mychatdb.n3yxdki.mongodb.net/?appName=myChatDB";
-
 const client = new MongoClient(uri);
 let messagesCollection;
+let onlineUsers = 0;
 
-// 📌 Connect to MongoDB
 async function connectDB() {
-  try {
-    await client.connect();
-    const db = client.db("myChatDB"); // database name
-    messagesCollection = db.collection("messages"); // collection
-    console.log("📌 Connected to MongoDB ✔");
-  } catch (err) {
-    console.error("❌ MongoDB Error:", err);
-  }
+  await client.connect();
+  const db = client.db("chatDB");
+  messagesCollection = db.collection("messages");
+  console.log("📌 Connected to MongoDB");
 }
 connectDB();
 
-// 📡 WebSocket Events
 io.on("connection", async (socket) => {
-  console.log("🟢 A user connected");
+  onlineUsers++;
+  io.emit("online users", onlineUsers);
 
-  // Load old messages from DB
-  const previousMessages = await messagesCollection.find().toArray();
-  socket.emit("load messages", previousMessages);
+  // Send chat history from DB
+  const storedMessages = await messagesCollection.find().toArray();
+  socket.emit("chat history", storedMessages);
 
   socket.on("user joined", async (username) => {
-    const msgObj = {
-      username: "System",
-      text: `${username} joined the chat 👋`,
-      timestamp: Date.now()
-    };
-
+    const msgObj = { username, text: `${username} joined the chat 👋`, timestamp: Date.now(), system: true };
     await messagesCollection.insertOne(msgObj);
     io.emit("chat message", msgObj);
   });
 
   socket.on("chat message", async (msgObj) => {
-    msgObj.timestamp = msgObj.timestamp || Date.now();
+    msgObj.timestamp = Date.now();
     await messagesCollection.insertOne(msgObj);
     io.emit("chat message", msgObj);
+  });
+
+  socket.on("disconnect", () => {
+    onlineUsers--;
+    io.emit("online users", onlineUsers);
   });
 });
 
