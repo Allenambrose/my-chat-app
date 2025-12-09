@@ -37,20 +37,25 @@ body {
   padding: 10px;
 }
 
-.my-msg {
-  background: #004d40;
+.my-msg, .their-msg {
   margin: 8px;
   padding: 8px;
   border-radius: 12px;
+}
+
+.my-msg {
+  background: #004d40;
   text-align: right;
 }
 
 .their-msg {
   background: #1e1e1e;
-  margin: 8px;
-  padding: 8px;
-  border-radius: 12px;
   text-align: left;
+}
+
+.deleted {
+  font-style: italic;
+  opacity: 0.6;
 }
 
 .user {
@@ -64,13 +69,14 @@ body {
   margin-left: 8px;
 }
 
+/* typing */
 .typing {
   font-style: italic;
   color: #00eaff;
   margin-top: 5px;
 }
 
-/* EMOJI PICKER PANEL */
+/* emoji panel */
 #emojiPanel {
   background: #1b1b1b;
   padding: 10px;
