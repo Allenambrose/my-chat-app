@@ -1,40 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Chat App</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Real-Time Chat</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="loginScreen">
-  <h2>Enter Name</h2>
-  <input id="usernameInput">
-  <button id="joinBtn">Join Chat</button>
-</div>
+  <h2 class="title">Real-Time Chat</h2>
 
-<div id="chatScreen" style="display:none;">
-  <div id="topBar">
-    <h3 id="onlineCount">Online: 0</h3>
-    <button id="clearBtn" class="adminBtn">Clear Chat</button>
+  <div id="loginScreen">
+    <h3>Enter your Name</h3>
+    <input id="usernameInput" placeholder="Your Name" />
+    <button id="joinBtn">Join Chat</button>
   </div>
 
-  <ul id="messages"></ul>
+  <div id="chatScreen" style="display:none;">
+    <div id="onlineBox"><strong>Online:</strong> <span id="onlineCount">0</span></div>
 
-  <!-- EMOJI PICKER PANEL -->
-  <div id="emojiPanel" class="hidden">
-    😄 😂 🤣 😍 ❤️ 😎 🙌 👀 👍 💯  
-    😇 😭 🤩 💀 😘 😡 🥳 🔥 👏 😴  
-    🤗 🎉 🤝 💔 🤣 🫡 😅 😤 😬 🥹
+    <ul id="messages"></ul>
+
+    <form id="form">
+      <div id="emojiBar">
+        <button class="emojiBtn">😀</button>
+        <button class="emojiBtn">😂</button>
+        <button class="emojiBtn">❤️</button>
+        <button class="emojiBtn">😎</button>
+        <button class="emojiBtn">👍</button>
+      </div>
+
+      <input id="input" autocomplete="off" placeholder="Type a message..." />
+      <button id="sendBtn">Send</button>
+    </form>
+
   </div>
 
-  <form id="form">
-    <button type="button" id="emojiBtn">😊</button>
-    <input id="input" autocomplete="off" placeholder="Message...">
-    <button>Send</button>
-  </form>
-</div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
