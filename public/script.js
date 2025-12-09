@@ -5,95 +5,92 @@ const loginScreen = document.getElementById("loginScreen");
 const chatScreen = document.getElementById("chatScreen");
 const usernameInput = document.getElementById("usernameInput");
 const joinBtn = document.getElementById("joinBtn");
+const onlineCount = document.getElementById("onlineCount");
 const form = document.getElementById("form");
 const input = document.getElementById("input");
 const messages = document.getElementById("messages");
+const clearBtn = document.getElementById("clearBtn");
 
-function formatTime(timestamp) {
-  const now = new Date();
-  const time = new Date(timestamp);
-
-  const sameDay = now.toDateString() === time.toDateString();
-
-  if (sameDay) {
-    return time.toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    });
-  }
-
-  return time.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
+function formatTime(ts) {
+  return new Date(ts).toLocaleTimeString("en-IN", {
+    hour: "2-digit", minute: "2-digit", hour12: true
   });
 }
 
-joinBtn.addEventListener("click", () => {
+joinBtn.onclick = () => {
   username = usernameInput.value.trim();
-  if (username === "") return;
-
+  if (!username) return;
+  
   loginScreen.style.display = "none";
   chatScreen.style.display = "block";
 
   socket.emit("user joined", username);
-});
+};
 
-form.addEventListener("submit", (e) => {
+form.onsubmit = (e) => {
   e.preventDefault();
-  if (input.value) {
-    socket.emit("chat message", {
-      username: username,
-      text: input.value,
-      timestamp: Date.now()
-    });
-    input.value = "";
-  }
+  if (!input.value.trim()) return;
+
+  socket.emit("chat message", {
+    username,
+    text: input.value,
+    timestamp: Date.now()
+  });
+
+  input.value = "";
+};
+
+socket.on("chat message", (msg) => {
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <div class="${msg.username === username ? 'my-msg' : 'their-msg'}">
+      <span class="user">${msg.username === username ? "You" : msg.username}</span>
+      <span class="text">${msg.text}</span>
+      <span class="time">${formatTime(msg.timestamp)}</span>
+    </div>
+  `;
+
+  messages.appendChild(li);
+  li.scrollIntoView({ behavior: "smooth" });
+
+  socket.emit("seen", username);
 });
 
-socket.on("chat message", (msgObj) => {
-  const item = document.createElement("li");
-  const formattedTime = formatTime(msgObj.timestamp);
-
-  if (msgObj.username === "System") {
-    item.classList.add("system-message");
-    item.innerHTML = `${msgObj.text} <span class="time">${formattedTime}</span>`;
-  } else if (msgObj.username === username) {
-    item.classList.add("my-message");
-    item.innerHTML = `<strong>You:</strong> ${msgObj.text}<span class="time">${formattedTime}</span>`;
-  } else {
-    item.classList.add("other-message");
-    item.innerHTML = `<strong>${msgObj.username}:</strong> ${msgObj.text}<span class="time">${formattedTime}</span>`;
-  }
-
-  messages.appendChild(item);
-  messages.lastElementChild?.scrollIntoView({ behavior: "smooth" });
+socket.on("online users", users => {
+  onlineCount.innerText = `Online: ${users.length}`;
 });
 
-// TYPING INDICATOR
 input.addEventListener("input", () => {
   socket.emit("typing", username);
 });
 
 socket.on("typing", (user) => {
-  if (user !== username) showTyping(user);
+  showTyping(user);
 });
 
 function showTyping(user) {
-  let typingDiv = document.getElementById("typingIndicator");
-
-  if (!typingDiv) {
-    typingDiv = document.createElement("div");
-    typingDiv.id = "typingIndicator";
-    typingDiv.classList.add("typing");
-    messages.appendChild(typingDiv);
+  const id = "typing";
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement("div");
+    el.id = id;
+    el.classList.add("typing");
+    messages.appendChild(el);
   }
-
-  typingDiv.textContent = `${user} is typing...`;
-
-  clearTimeout(window.typingTimeout);
-  window.typingTimeout = setTimeout(() => {
-    typingDiv.remove();
-  }, 1800);
+  el.innerText = `${user} is typing...`;
+  setTimeout(() => el.remove(), 2000);
 }
+
+socket.on("seen update", (user) => {
+  document.querySelectorAll(".my-msg .time").forEach(t => {
+    t.innerText = "Seen ✔✔";
+  });
+});
+
+clearBtn.onclick = () => {
+  socket.emit("clear chat", username);
+};
+
+socket.on("clear chat now", () => {
+  messages.innerHTML = "";
+});
