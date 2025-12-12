@@ -5,31 +5,42 @@
   <title>Real-Time Chat</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <h2 class="title">Real-Time Chat</h2>
-
+  <!-- LOGIN SCREEN -->
   <div id="loginScreen">
-    <h3>Enter your Name</h3>
-    <input id="usernameInput" placeholder="Your Name" />
+    <h2>Enter Name</h2>
+    <input id="usernameInput" placeholder="Your Name">
     <button id="joinBtn">Join Chat</button>
   </div>
 
+  <!-- CHAT SCREEN -->
   <div id="chatScreen" style="display:none;">
-    <div id="onlineBox"><strong>Online:</strong> <span id="onlineCount">0</span></div>
 
+    <!-- TOP BAR -->
+    <div id="topBar">
+      <div><strong>Online:</strong> <span id="onlineCount">0</span></div>
+
+      <!-- Only admin = allen can see this -->
+      <button id="clearChatBtn" class="adminBtn" style="display:none;">
+        Clear Chat
+      </button>
+    </div>
+
+    <!-- EMOJI PANEL -->
+    <div id="emojiPanel" class="hidden"></div>
+
+    <!-- MESSAGES -->
     <ul id="messages"></ul>
 
-    <form id="form">
-      <div id="emojiBar">
-        <button class="emojiBtn">😀</button>
-        <button class="emojiBtn">😂</button>
-        <button class="emojiBtn">❤️</button>
-        <button class="emojiBtn">😎</button>
-        <button class="emojiBtn">👍</button>
-      </div>
+    <!-- TYPING TEXT -->
+    <div id="typingBox" class="typing"></div>
 
-      <input id="input" autocomplete="off" placeholder="Type a message..." />
+    <!-- MESSAGE FORM -->
+    <form id="form">
+      <button type="button" id="emojiBtn">😊</button>
+      <input id="input" autocomplete="off" placeholder="Type a message...">
       <button id="sendBtn">Send</button>
     </form>
 
