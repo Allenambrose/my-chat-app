@@ -67,17 +67,25 @@ io.on("connection", async (socket) => {
 
   // When user joins
   socket.on("join", async (username) => {
-    socket.data.username = username;
+  
+  username = username.trim();
+  socket.username = username;  // store username on socket
 
-    const joinMsg = {
-      username: "System",
-      text: `${username} joined 👋`,
-      timestamp: Date.now(),
-    };
+  const joinMsg = {
+    username: "System",
+    text: `${username} joined 👋`,
+    timestamp: Date.now(),
+  };
+
+  // Prevent duplicate system messages
+  if (!socket.hasJoined) {
+    socket.hasJoined = true;
 
     io.emit("message", joinMsg);
     await messagesCollection.insertOne(joinMsg);
-  });
+  }
+});
+
 
   // When user sends message
   socket.on("message", async (msg) => {
