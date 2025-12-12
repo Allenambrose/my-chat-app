@@ -23,6 +23,21 @@ function formatTime(t) {
 }
 
 // -----------------------------
+// AUTO-GENERATE EMOJIS
+// -----------------------------
+const emojiList = [
+  "😀","😁","😂","🤣","😅","😊","😍","😘","😎","🤩",
+  "😇","🙂","🙃","😉","😌","😢","😭","😡","🤬","🤯",
+  "😱","😳","😴","🤤","🤕","🤒","🤧","🥵","🥶","🤢",
+  "🤮","🥳","👏","🙏","👌","👍","👎","🤝","🤟","💪",
+  "❤️","💛","💚","💙","💜","🖤","✨","🔥","⭐","💯"
+];
+
+emojiPanel.innerHTML = emojiList
+  .map(e => `<span class="emoji">${e}</span>`)
+  .join("");
+
+// -----------------------------
 // JOIN CHAT
 // -----------------------------
 joinBtn.addEventListener("click", () => {
@@ -30,7 +45,7 @@ joinBtn.addEventListener("click", () => {
   if (!username) return;
 
   loginScreen.style.display = "none";
-  chatScreen.style.display = "block";
+  chatScreen.style.display = "flex";
 
   socket.emit("join", username);
 });
@@ -111,7 +126,7 @@ socket.on("message", (msg) => {
 });
 
 // -----------------------------
-// DELETE HANDLER FROM SERVER
+// DELETE HANDLER
 // -----------------------------
 socket.on("messageDeleted", (id) => {
   const msgElement = document.querySelector(`[data-id='${id}']`);
@@ -130,18 +145,21 @@ function renderMessage(msg) {
 
   const time = `<span class="time">${formatTime(msg.timestamp)}</span>`;
 
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("msg-row");
+
   if (msg.username === "System") {
+    wrapper.classList.add("center");
     li.classList.add("system");
     li.innerHTML = `${msg.text} ${time}`;
   }
   else if (msg.username === username) {
+    wrapper.classList.add("me");
     li.classList.add("my-msg");
-    li.innerHTML = `
-      <span class="text">${msg.text}</span>
-      ${time}
-    `;
+    li.innerHTML = `<span class="text">${msg.text}</span> ${time}`;
   }
   else {
+    wrapper.classList.add("them");
     li.classList.add("their-msg");
     li.innerHTML = `
       <span class="user">${msg.username}</span>: 
@@ -150,6 +168,7 @@ function renderMessage(msg) {
     `;
   }
 
-  messages.appendChild(li);
+  wrapper.appendChild(li);
+  messages.appendChild(wrapper);
   messages.scrollTop = messages.scrollHeight;
 }
