@@ -1,25 +1,52 @@
+/* --------------------------
+   GLOBAL STYLE
+---------------------------*/
 body {
   background: #0c0f0f;
   color: white;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
+/* --------------------------
+   LOGIN SCREEN
+---------------------------*/
 #loginScreen {
   text-align: center;
-  margin-top: 200px;
+  margin-top: 150px;
 }
 
 #usernameInput {
-  padding: 10px;
+  padding: 12px;
   font-size: 18px;
+  width: 220px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
 }
 
+#joinBtn {
+  margin-top: 12px;
+  padding: 10px 18px;
+  font-size: 16px;
+  background: #009688;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* --------------------------
+   TOP BAR (ONLINE COUNT + ADMIN)
+---------------------------*/
 #topBar {
   background: #003d33;
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  font-size: 16px;
 }
 
 .adminBtn {
@@ -28,87 +55,141 @@ body {
   border: none;
   border-radius: 6px;
   color: white;
+  cursor: pointer;
 }
 
+/* --------------------------
+   MESSAGE LIST
+---------------------------*/
 #messages {
-  height: 73vh;
+  height: 68vh;
   overflow-y: auto;
   list-style: none;
+  padding: 12px;
+  margin: 0;
+}
+
+/* Message bubbles */
+.my-msg,
+.their-msg,
+.system {
+  margin: 10px 0;
   padding: 10px;
-}
-
-.my-msg, .their-msg {
-  margin: 8px;
-  padding: 8px;
   border-radius: 12px;
+  max-width: 75%;
+  display: inline-block;
 }
 
+/* My messages (Right) */
 .my-msg {
-  background: #004d40;
+  background: #00594d;
+  margin-left: auto;
   text-align: right;
 }
 
+/* Other user's messages (Left) */
 .their-msg {
   background: #1e1e1e;
   text-align: left;
 }
 
-.deleted {
+/* System messages (Center) */
+.system {
+  background: transparent;
+  color: #00eaff;
+  text-align: center;
+  width: 100%;
   font-style: italic;
-  opacity: 0.6;
 }
 
+/* Username label */
 .user {
   font-weight: bold;
   color: #00ffd2;
 }
 
+/* Timestamp */
 .time {
   opacity: .7;
   font-size: 10px;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
-/* typing */
+/* Deleted message */
+.deleted {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* --------------------------
+   TYPING INDICATOR
+---------------------------*/
 .typing {
   font-style: italic;
   color: #00eaff;
-  margin-top: 5px;
+  padding-left: 12px;
+  height: 20px;
 }
 
-/* emoji panel */
+/* --------------------------
+   EMOJI PANEL
+---------------------------*/
 #emojiPanel {
   background: #1b1b1b;
   padding: 10px;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 8px;
-  font-size: 25px;
+  gap: 10px;
+  font-size: 24px;
   border-radius: 12px;
-  margin: 5px;
+  margin: 8px;
 }
+
 #emojiPanel.hidden {
   display: none;
 }
 
+.emoji {
+  cursor: pointer;
+  padding: 6px;
+}
+
+/* --------------------------
+   INPUT FORM
+---------------------------*/
 #form {
   display: flex;
   background: #003d33;
-  padding: 8px;
+  padding: 10px;
+  gap: 8px;
 }
+
 #input {
   flex-grow: 1;
   padding: 10px;
   border: none;
   border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+  background: #fff;
+  color: #000;
+}
+
+#sendBtn,
+#emojiBtn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 #emojiBtn {
   background: #00796b;
-  padding: 5px 12px;
-  border: none;
   color: white;
-  font-size: 20px;
-  margin-right: 8px;
-  border-radius: 6px;
+}
+
+#sendBtn {
+  background: #009688;
+  color: white;
 }

@@ -20,24 +20,26 @@
 
     <!-- TOP BAR -->
     <div id="topBar">
-      <div><strong>Online:</strong> <span id="onlineCount">0</span></div>
+      <div>
+        <strong>Online:</strong> <span id="onlineCount">0</span>
+      </div>
 
-      <!-- Only admin = allen can see this -->
-      <button id="clearChatBtn" class="adminBtn" style="display:none;">
-        Clear Chat
-      </button>
+      <!-- Only ADMIN = "allen" can see this -->
+      <button id="clearChatBtn" class="adminBtn" style="display:none;">🗑 Clear Chat</button>
     </div>
 
     <!-- EMOJI PANEL -->
-    <div id="emojiPanel" class="hidden"></div>
+    <div id="emojiPanel" class="hidden">
+      <!-- Emojis inserted here by JS -->
+    </div>
 
     <!-- MESSAGES -->
     <ul id="messages"></ul>
 
-    <!-- TYPING TEXT -->
+    <!-- TYPING INDICATOR -->
     <div id="typingBox" class="typing"></div>
 
-    <!-- MESSAGE FORM -->
+    <!-- MESSAGE AREA -->
     <form id="form">
       <button type="button" id="emojiBtn">😊</button>
       <input id="input" autocomplete="off" placeholder="Type a message...">
