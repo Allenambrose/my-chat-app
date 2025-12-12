@@ -220,3 +220,68 @@ body {
   background: #009688;
   color: white;
 }
+
+
+
+/* -----------------------------------------
+   MOBILE RESPONSIVE FIXES
+------------------------------------------*/
+@media (max-width: 600px) {
+
+  /* Login screen spacing fixed */
+  #loginScreen {
+    margin-top: 80px;
+  }
+
+  #usernameInput {
+    width: 70%;
+    font-size: 18px;
+  }
+
+  #joinBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+
+  /* Chat screen layout */
+  #chatScreen {
+    height: 100vh;
+  }
+
+  /* Messages area */
+  #messages {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  /* Message bubble width on small screens */
+  .my-msg,
+  .their-msg {
+    max-width: 85%;
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  /* Emoji panel adjust */
+  #emojiPanel {
+    grid-template-columns: repeat(6, 1fr);
+    font-size: 22px;
+    gap: 6px;
+  }
+
+  /* Input bar */
+  #form {
+    padding: 8px;
+  }
+
+  #input {
+    font-size: 15px;
+    padding: 8px;
+  }
+
+  #sendBtn, #emojiBtn {
+    font-size: 16px;
+    padding: 6px 10px;
+  }
+}
+
