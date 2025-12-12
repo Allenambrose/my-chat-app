@@ -103,6 +103,18 @@ io.on("connection", async (socket) => {
     }
   });
 
+  // ADMIN CLEAR CHAT
+socket.on("clearChat", async () => {
+  try {
+    await messagesCollection.deleteMany({});
+    io.emit("chatCleared"); // notify all clients
+    console.log("🗑️ Chat cleared by admin");
+  } catch (err) {
+    console.error("❌ Clear chat error:", err);
+  }
+});
+
+
   // Typing
   socket.on("typing", () => {
     socket.broadcast.emit("typing", socket.data.username);

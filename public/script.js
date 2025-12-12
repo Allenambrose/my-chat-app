@@ -1,6 +1,8 @@
 const socket = io();
 let username;
 
+let isAdmin = false;
+
 // UI elements
 const loginScreen = document.getElementById("loginScreen");
 const chatScreen = document.getElementById("chatScreen");
@@ -43,6 +45,12 @@ emojiPanel.innerHTML = emojiList
 joinBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
   if (!username) return;
+
+  // ⭐ ADMIN CHECK HERE ⭐
+  if (username.toLowerCase() === "allen") {
+    isAdmin = true;
+    document.getElementById("clearChatBtn").style.display = "block";
+  }
 
   loginScreen.style.display = "none";
   chatScreen.style.display = "flex";
@@ -104,6 +112,18 @@ socket.on("typing", (user) => {
 });
 
 // -----------------------------
+// CLEAR CHAT BUTTON (ADMIN ONLY)
+// -----------------------------
+document.getElementById("clearChatBtn").addEventListener("click", () => {
+  if (!isAdmin) return;
+
+  if (confirm("Are you sure you want to clear the chat for EVERYONE?")) {
+    socket.emit("clearChat");
+  }
+});
+
+
+// -----------------------------
 // ONLINE COUNT
 // -----------------------------
 socket.on("usersOnline", (count) => {
@@ -135,6 +155,20 @@ socket.on("messageDeleted", (id) => {
     msgElement.querySelector(".text").textContent = "(message deleted)";
   }
 });
+
+socket.on("messageDeleted", (id) => {
+  const msgElement = document.querySelector(`[data-id='${id}']`);
+  if (msgElement) {
+    msgElement.classList.add("deleted");
+    msgElement.querySelector(".text").textContent = "(message deleted)";
+  }
+});
+
+// CLEAR CHAT EVENT
+socket.on("chatCleared", () => {
+  messages.innerHTML = "";
+});
+
 
 // -----------------------------
 // RENDER MESSAGE FUNCTION
