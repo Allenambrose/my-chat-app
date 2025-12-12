@@ -10,22 +10,18 @@
   <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
 
   <!-- LOGIN SCREEN -->
-<div id="loginScreen" class="login-container">
-  <div class="login-card">
-    <h2>Welcome</h2>
+  <div id="loginScreen" class="login-container">
+    <div class="login-card">
+      <h2>Welcome</h2>
 
-    <input id="usernameInput" class="login-input" placeholder="Enter your name">
+      <input id="usernameInput" class="login-input" placeholder="Enter your name">
 
-    <button id="joinBtn" class="login-btn">
-      Join Chat
-    </button>
+      <button id="joinBtn" class="login-btn">Join Chat</button>
+    </div>
   </div>
-</div>
-
 
   <!-- CHAT SCREEN -->
   <div id="chatScreen" style="display:none;">
@@ -42,11 +38,11 @@
 
     <!-- EMOJI PANEL -->
     <div id="emojiPanel" class="hidden">
-      <!-- Emojis inserted here by JS -->
+      <!-- Emojis inserted by JS -->
     </div>
 
-    <!-- MESSAGES -->
-    <ul id="messages"></ul>
+    <!-- ⭐ FIXED: MESSAGE CONTAINER MUST BE A DIV, NOT UL ⭐ -->
+    <div id="messages"></div>
 
     <!-- TYPING INDICATOR -->
     <div id="typingBox" class="typing"></div>

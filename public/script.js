@@ -171,38 +171,44 @@ socket.on("chatCleared", () => {
 
 
 // -----------------------------
-// RENDER MESSAGE FUNCTION
+// RENDER MESSAGE FUNCTION (NEW WHATSAPP STYLE)
 // -----------------------------
 function renderMessage(msg) {
-  const li = document.createElement("li");
-  li.dataset.id = msg._id;
-
-  const time = `<span class="time">${formatTime(msg.timestamp)}</span>`;
 
   const wrapper = document.createElement("div");
   wrapper.classList.add("msg-row");
 
+  const bubble = document.createElement("div");
+  bubble.dataset.id = msg._id;
+
+  const time = `<span class="time">${formatTime(msg.timestamp)}</span>`;
+
   if (msg.username === "System") {
     wrapper.classList.add("center");
-    li.classList.add("system");
-    li.innerHTML = `${msg.text} ${time}`;
+    bubble.classList.add("system");
+    bubble.innerHTML = `${msg.text} ${time}`;
   }
+
   else if (msg.username === username) {
     wrapper.classList.add("me");
-    li.classList.add("my-msg");
-    li.innerHTML = `<span class="text">${msg.text}</span> ${time}`;
-  }
-  else {
-    wrapper.classList.add("them");
-    li.classList.add("their-msg");
-    li.innerHTML = `
-      <span class="user">${msg.username}</span>: 
-      <span class="text">${msg.text}</span>
-      ${time}
+    bubble.classList.add("my-msg");
+    bubble.innerHTML = `
+        <span class="text">${msg.text}</span>
+        ${time}
     `;
   }
 
-  wrapper.appendChild(li);
+  else {
+    wrapper.classList.add("them");
+    bubble.classList.add("their-msg");
+    bubble.innerHTML = `
+        <span class="user">${msg.username}</span>
+        <span class="text">${msg.text}</span>
+        ${time}
+    `;
+  }
+
+  wrapper.appendChild(bubble);
   messages.appendChild(wrapper);
   messages.scrollTop = messages.scrollHeight;
 }
