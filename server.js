@@ -7,9 +7,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "*",
-  },
+  cors: { origin: "*" },
 });
 
 // Serve frontend
@@ -28,7 +26,6 @@ async function connectDB() {
     });
 
     await client.connect();
-
     const db = client.db("myChatDB");
     messagesCollection = db.collection("messages");
 
@@ -53,13 +50,9 @@ io.on("connection", async (socket) => {
   onlineUsers++;
   io.emit("usersOnline", onlineUsers);
 
-  // Send chat history
+  // Load chat history
   try {
-    const history = await messagesCollection
-      .find({})
-      .sort({ timestamp: 1 })
-      .toArray();
-
+    const history = await messagesCollection.find({}).sort({ timestamp: 1 }).toArray();
     socket.emit("chatHistory", history);
   } catch (err) {
     console.error("❌ History Fetch Error:", err);
@@ -67,25 +60,22 @@ io.on("connection", async (socket) => {
 
   // When user joins
   socket.on("join", async (username) => {
-  
-  username = username.trim();
-  socket.username = username;  // store username on socket
+    username = username.trim();
+    socket.username = username;
 
-  const joinMsg = {
-    username: "System",
-    text: `${username} joined 👋`,
-    timestamp: Date.now(),
-  };
+    const joinMsg = {
+      username: "System",
+      text: `${username} joined 👋`,
+      timestamp: Date.now(),
+    };
 
-  // Prevent duplicate system messages
-  if (!socket.hasJoined) {
-    socket.hasJoined = true;
-
-    io.emit("message", joinMsg);
-    await messagesCollection.insertOne(joinMsg);
-  }
-});
-
+    // Prevent duplicate join message
+    if (!socket.hasJoined) {
+      socket.hasJoined = true;
+      io.emit("message", joinMsg);
+      await messagesCollection.insertOne(joinMsg);
+    }
+  });
 
   // When user sends message
   socket.on("message", async (msg) => {
@@ -112,20 +102,19 @@ io.on("connection", async (socket) => {
   });
 
   // ADMIN CLEAR CHAT
-socket.on("clearChat", async () => {
-  try {
-    await messagesCollection.deleteMany({});
-    io.emit("chatCleared"); // notify all clients
-    console.log("🗑️ Chat cleared by admin");
-  } catch (err) {
-    console.error("❌ Clear chat error:", err);
-  }
-});
+  socket.on("clearChat", async () => {
+    try {
+      await messagesCollection.deleteMany({});
+      io.emit("chatCleared");
+      console.log("🗑️ Chat cleared by admin");
+    } catch (err) {
+      console.error("❌ Clear chat error:", err);
+    }
+  });
 
-
-  // Typing
+  // Typing indicator (FIXED)
   socket.on("typing", () => {
-    socket.broadcast.emit("typing", socket.data.username);
+    socket.broadcast.emit("typing", socket.username);
   });
 
   // Disconnect
